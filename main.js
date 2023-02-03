@@ -20,6 +20,7 @@ async function downloadAction(name, path) {
 }
 
 async function main() {
+    let budget = 100;
     try {
         const token = core.getInput("github_token", { required: true })
         const [owner, repo] = core.getInput("repo", { required: true }).split("/")
@@ -112,6 +113,10 @@ async function main() {
             }
             )) {
                 for (const run of runs.data) {
+                    budget -= 1;
+                    if (budget == 0) {
+                      throw new Error("could not find artifact in last 100 runs")
+                    }
                     if (commit && run.head_sha != commit) {
                         continue
                     }
